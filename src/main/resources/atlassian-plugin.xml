@@ -1,0 +1,55 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+    </plugin-info>
+
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="i18n" location="vm"/>
+    
+    <!-- add our web resources -->
+    <web-resource key="vm-resources" name="vm Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        
+        <resource type="download" name="vm.css" location="/css/vm.css"/>
+        <resource type="download" name="vm.js" location="/js/vm.js"/>
+        <resource type="download" name="images/" location="/images"/>
+
+        <context>vm</context>
+    </web-resource>
+
+	<taskType key="revertVirtualMachineTask" name="Revert Virtual Machine" class="io.blueprints.bamboo.plugins.RevertVirtualMachineTask">
+	  	<description>Reverts a virtual machine to a snapshot</description>
+		<configuration class="io.blueprints.bamboo.plugins.RevertVirtualMachineTaskConfigurator"/>
+		<resource type="freemarker" name="edit" location="editRevertVirtualMachineTask.ftl"/>
+      	<resource type="freemarker" name="view" location="viewRevertVirtualMachineTask.ftl"/>
+	</taskType>
+	
+	<taskType key="shutdownVirtualMachineTask" name="Shutdown Virtual Machine" class="io.blueprints.bamboo.plugins.ShutdownVirtualMachineTask">
+	  	<description>Shuts down a virtual machine</description>
+		<configuration class="io.blueprints.bamboo.plugins.ShutdownVirtualMachineTaskConfigurator"/>
+		<resource type="freemarker" name="edit" location="editShutdownVirtualMachineTask.ftl"/>
+      	<resource type="freemarker" name="view" location="viewShutdownVirtualMachineTask.ftl"/>
+	</taskType>
+	
+	<taskType key="startVirtualMachineTask" name="Start Virtual Machine" class="io.blueprints.bamboo.plugins.StartVirtualMachineTask">
+	  	<description>Starts a virtual machine</description>
+		<configuration class="io.blueprints.bamboo.plugins.StartVirtualMachineTaskConfigurator"/>
+		<resource type="freemarker" name="edit" location="editStartVirtualMachineTask.ftl"/>
+      	<resource type="freemarker" name="view" location="viewStartVirtualMachineTask.ftl"/>
+	</taskType>
+	
+	<taskType key="powerOffVirtualMachineTask" name="Power Virtual Machine Off" class="io.blueprints.bamboo.plugins.PowerOffVirtualMachineTask">
+	  	<description>Powers a virtual machine off</description>
+		<configuration class="io.blueprints.bamboo.plugins.PowerOffVirtualMachineTaskConfigurator"/>
+		<resource type="freemarker" name="edit" location="editPowerOffVirtualMachineTask.ftl"/>
+      	<resource type="freemarker" name="view" location="viewPowerOffVirtualMachineTask.ftl"/>
+	</taskType>
+    
+    <!-- import from the product container -->
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
+    
+</atlassian-plugin>
