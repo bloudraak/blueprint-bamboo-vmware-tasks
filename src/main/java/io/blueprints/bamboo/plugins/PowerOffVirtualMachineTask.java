@@ -1,5 +1,6 @@
 package io.blueprints.bamboo.plugins;
- 
+
+import java.net.URL;
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.task.TaskContext;
 import com.atlassian.bamboo.task.TaskException;
@@ -18,7 +19,20 @@ public class PowerOffVirtualMachineTask implements TaskType
 		final String password = taskContext.getConfigurationMap().get("password");
 		final String name = taskContext.getConfigurationMap().get("name");
 
-        buildLogger.addBuildLogEntry("Powering off virtual machine '" + name + "' on '" + server + "' using username '" + username + "'");
+		try {
+        	buildLogger.addBuildLogEntry("Powering off virtual machine '" + name + "' on '" + server + "' using username '" + username + "'");
+			VMwareVirtualMachine virtualMachine = new VMwareVirtualMachine(new URL(server), name, username, password);
+			try {
+				virtualMachine.powerOff();
+				buildLogger.addBuildLogEntry("Powered off virtual machine '" + name + "' on '" + server + "' using username '" + username + "'");
+			}
+			finally {
+				virtualMachine.disconnect();
+			}
+		}
+		catch(Exception exception) {
+			throw new TaskException("Failed to powered off virtual machine '" + name + "' on '" + server + "' using username '" + username + "'", exception);
+		}
         return TaskResultBuilder.create(taskContext).success().build();
     }
 }

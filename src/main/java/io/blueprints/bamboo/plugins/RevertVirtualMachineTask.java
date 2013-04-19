@@ -1,5 +1,6 @@
 package io.blueprints.bamboo.plugins;
- 
+
+import java.net.URL;
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.task.TaskContext;
 import com.atlassian.bamboo.task.TaskException;
@@ -18,8 +19,22 @@ public class RevertVirtualMachineTask implements TaskType
 		final String password = taskContext.getConfigurationMap().get("password");
 		final String name = taskContext.getConfigurationMap().get("name");
 		final String snapshot = taskContext.getConfigurationMap().get("snaphot");
+		
+		try {
+			buildLogger.addBuildLogEntry("Reverting virtual machine '" + name + "' to snapshot '" + snapshot + "' on '" + server + "' using username '" + username + "'");
+			VMwareVirtualMachine virtualMachine = new VMwareVirtualMachine(new URL(server), name, username, password);
+			try {
+				virtualMachine.revertToSnapshot(snapshot);
+				buildLogger.addBuildLogEntry("Reverted virtual machine '" + name + "' to snapshot '" + snapshot + "' on '" + server + "' using username '" + username + "'");
+			}
+			finally {
+				virtualMachine.disconnect();
+			}
+		}
+		catch(Exception exception) {
+			throw new TaskException("Failed to revert virtual machine '" + name + "' to snapshot '" + snapshot + "' on '" + server + "' using username '" + username + "'", exception);
+		}
 
-        buildLogger.addBuildLogEntry("Reverting virtual machine '" + name + "' to snapshot '" + snapshot + "' on '" + server + "' using username '" + username + "'");
         return TaskResultBuilder.create(taskContext).success().build();
     }
 }

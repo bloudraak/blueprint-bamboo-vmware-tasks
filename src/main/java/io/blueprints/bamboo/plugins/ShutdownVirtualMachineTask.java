@@ -1,5 +1,6 @@
 package io.blueprints.bamboo.plugins;
- 
+
+import java.net.URL;
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.task.TaskContext;
 import com.atlassian.bamboo.task.TaskException;
@@ -17,9 +18,20 @@ public class ShutdownVirtualMachineTask implements TaskType
 		final String username = taskContext.getConfigurationMap().get("username");
 		final String password = taskContext.getConfigurationMap().get("password");
 		final String name = taskContext.getConfigurationMap().get("name");
-
-        buildLogger.addBuildLogEntry("Shutting down guest in virtual machine '" + name + "' on '" + server + "' using username '" + username + "'");
-
+		try {
+			buildLogger.addBuildLogEntry("Shutting down guest in virtual machine '" + name + "' on '" + server + "' using username '" + username + "'");
+			VMwareVirtualMachine virtualMachine = new VMwareVirtualMachine(new URL(server), name, username, password);
+			try {
+				virtualMachine.shutdown();
+				buildLogger.addBuildLogEntry("Succesfully shutdown guest in virtual machine '" + name + "' on '" + server + "' using username '" + username + "'");
+			}
+			finally {
+				virtualMachine.disconnect();
+			}
+		}
+		catch(Exception exception) {
+			throw new TaskException("Failed to shutdown guest in virtual machine '" + name + "' on '" + server + "' using username '" + username + "'", exception);
+		}
         return TaskResultBuilder.create(taskContext).success().build();
     }
 }
