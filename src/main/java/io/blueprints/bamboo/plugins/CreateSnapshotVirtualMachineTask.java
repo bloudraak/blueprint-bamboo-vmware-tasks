@@ -57,13 +57,12 @@ public class CreateSnapshotVirtualMachineTask extends VirtualMachineTaskType
     @Override
 	protected TaskResult execute(final TaskContext taskContext, final VirtualMachine vm) throws Throwable
 	{
-
 		final BuildLogger buildLogger = taskContext.getBuildLogger();
 		final String name = vm.getName();
-	 	String snapshotname = taskContext.getConfigurationMap().get("snapshotName");
+		String snapshotname = taskContext.getConfigurationMap().get("snapshotName");
 		
 		if (snapshotname == null || "".equals(snapshotname)) {
-			snapshotname = "boo";
+			snapshotname = taskContext.getBuildContext().getPlanResultKey().getKey();
 		}
 		
 		Task task = vm.createSnapshot_Task(snapshotname, "", false, false);
