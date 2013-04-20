@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class PowerOffVirtualMachineTaskConfigurator extends AbstractTaskConfigurator
+public class VirtualMachineTaskConfigurator extends AbstractTaskConfigurator
 {
     private TextProvider textProvider;
 

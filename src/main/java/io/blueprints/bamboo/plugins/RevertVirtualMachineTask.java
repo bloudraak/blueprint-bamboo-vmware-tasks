@@ -94,7 +94,9 @@ public class RevertVirtualMachineTask implements TaskType
 				buildLogger.addBuildLogEntry("The guest of the virtual machine '" + name + "' is ready to be used.");
 			}
 			finally {
+				buildLogger.addBuildLogEntry("Disconnecting from server '" + server + "'.");
 				serviceInstance.getServerConnection().logout();
+				buildLogger.addBuildLogEntry("Disconnected from server '" + server + "'.");
 			}
 		}
 		catch(Exception exception) {

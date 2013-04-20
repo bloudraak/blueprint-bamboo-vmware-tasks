@@ -85,7 +85,9 @@ public class ShutdownVirtualMachineTask implements TaskType
 				buildLogger.addBuildLogEntry("The virtual machine '" + name + "' has was succesfully shutdown and powered off.");
 			}
 			finally {
+				buildLogger.addBuildLogEntry("Disconnecting from server '" + server + "'.");
 				serviceInstance.getServerConnection().logout();
+				buildLogger.addBuildLogEntry("Disconnected from server '" + server + "'.");
 			}
 		}
 		catch(Exception exception) {

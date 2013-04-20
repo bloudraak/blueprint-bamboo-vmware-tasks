@@ -67,8 +67,12 @@ public class StartVirtualMachineTask implements TaskType
 				if (vmri.getPowerState() != VirtualMachinePowerState.poweredOn) {
 					buildLogger.addBuildLogEntry("The virtual machine '" + name + "' is not powered on.");
 					Task task = vm.powerOnVM_Task(null);
-					task.waitForMe();
-					buildLogger.addBuildLogEntry("The virtual machine '" + name + "' has been powered on.");
+					if(task.waitForMe()==Task.SUCCESS) { 
+						buildLogger.addBuildLogEntry("The virtual machine '" + name + "' has been powered on.");
+					}
+					else {
+						buildLogger.addBuildLogEntry("The virtual machine '" + name + "' failed to powered on.");
+					}
 				}
 				else {
 					buildLogger.addBuildLogEntry("The virtual machine '" + name + "' is already in a powered on state.");
@@ -105,7 +109,9 @@ public class StartVirtualMachineTask implements TaskType
 				buildLogger.addBuildLogEntry("The guest of the virtual machine '" + name + "' is ready to be used.");
 			}
 			finally {
+				buildLogger.addBuildLogEntry("Disconnecting from server '" + server + "'.");
 				serviceInstance.getServerConnection().logout();
+				buildLogger.addBuildLogEntry("Disconnected from server '" + server + "'.");
 			}
 		}
 		catch(Exception exception) {

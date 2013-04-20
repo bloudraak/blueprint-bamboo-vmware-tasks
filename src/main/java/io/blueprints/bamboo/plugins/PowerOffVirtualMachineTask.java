@@ -70,11 +70,17 @@ public class PowerOffVirtualMachineTask implements TaskType
 				
 				buildLogger.addBuildLogEntry("Requesting that the virtual machine '" + name + "' power off.");
 				Task task = vm.powerOffVM_Task();
-				task.waitForMe();
-				buildLogger.addBuildLogEntry("The virtual machine '" + name + "' has was succesfully powered off.");
+				if(task.waitForMe()==Task.SUCCESS) { 
+					buildLogger.addBuildLogEntry("The virtual machine '" + name + "' has was succesfully powered off.");
+				}
+				else {
+					buildLogger.addBuildLogEntry("Failed to power off the virtual machine '" + name + "'.");
+				}
 			}
 			finally {
+				buildLogger.addBuildLogEntry("Disconnecting from server '" + server + "'.");
 				serviceInstance.getServerConnection().logout();
+				buildLogger.addBuildLogEntry("Disconnected from server '" + server + "'.");
 			}
 		}
 		catch(Exception exception) {
