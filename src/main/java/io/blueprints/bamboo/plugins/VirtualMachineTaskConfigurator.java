@@ -32,6 +32,7 @@ import com.atlassian.bamboo.collections.ActionParametersMap;
 import com.atlassian.bamboo.task.AbstractTaskConfigurator;
 import com.atlassian.bamboo.task.TaskDefinition;
 import com.atlassian.bamboo.utils.error.ErrorCollection;
+import com.atlassian.bamboo.security.EncryptionService;
 import com.opensymphony.xwork.TextProvider;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -43,16 +44,42 @@ import java.util.Map;
 public class VirtualMachineTaskConfigurator extends AbstractTaskConfigurator
 {
     private TextProvider textProvider;
+	public static final String HOST = "server";
+    public static final String USERNAME = "username";
+    public static final String PLAIN_PASSWORD = "password";
+    public static final String PASSWORD = "encryptedPassword";
+    public static final String CHANGE_PASSWORD = "change_password";
+ 	public static final String NAME = "name";
+
+	private final EncryptionService encryptionService;
+
+    public VirtualMachineTaskConfigurator(EncryptionService encryptionService)
+    {
+        this.encryptionService = encryptionService;
+    }
 
     @NotNull
     @Override
     public Map<String, String> generateTaskConfigMap(@NotNull final ActionParametersMap params, @Nullable final TaskDefinition previousTaskDefinition)
     {
         final Map<String, String> config = super.generateTaskConfigMap(params, previousTaskDefinition);
-		config.put("server", params.getString("server"));
-		config.put("username", params.getString("username"));
-		config.put("password", params.getString("password"));
-		config.put("name", params.getString("name"));
+		config.put(HOST, params.getString(HOST));
+		config.put(USERNAME, params.getString(USERNAME));
+		config.put(NAME, params.getString(NAME));
+		
+		String passwordChange = params.getString(CHANGE_PASSWORD);
+		if ("true".equals(passwordChange)) {
+			final String password = params.getString(PLAIN_PASSWORD);
+			config.put(PASSWORD, encryptionService.encrypt(password));
+		}
+		else if (previousTaskDefinition != null) {
+			config.put(PASSWORD, previousTaskDefinition.getConfiguration().get(PASSWORD));
+		}
+		else {
+			final String password = params.getString(PLAIN_PASSWORD);
+			config.put(PASSWORD, encryptionService.encrypt(password));
+		}
+
         return config;
     }
 
@@ -60,11 +87,6 @@ public class VirtualMachineTaskConfigurator extends AbstractTaskConfigurator
     public void populateContextForCreate(@NotNull final Map<String, Object> context)
     {
         super.populateContextForCreate(context);
-
-        context.put("server", "");
-		context.put("username", "");
-		context.put("password", "");
-		context.put("name", "");
     }
 
     @Override
@@ -72,20 +94,19 @@ public class VirtualMachineTaskConfigurator extends AbstractTaskConfigurator
     {
         super.populateContextForEdit(context, taskDefinition);
 
-        context.put("server", taskDefinition.getConfiguration().get("server"));
-		context.put("username", taskDefinition.getConfiguration().get("username"));
-		context.put("password", taskDefinition.getConfiguration().get("password"));
-		context.put("name", taskDefinition.getConfiguration().get("name"));
+        context.put(HOST, taskDefinition.getConfiguration().get(HOST));
+		context.put(USERNAME, taskDefinition.getConfiguration().get(USERNAME));
+		context.put(PLAIN_PASSWORD, taskDefinition.getConfiguration().get(PASSWORD));
+		context.put(NAME, taskDefinition.getConfiguration().get(NAME));
     }
 
     @Override
     public void populateContextForView(@NotNull final Map<String, Object> context, @NotNull final TaskDefinition taskDefinition)
     {
         super.populateContextForView(context, taskDefinition);
-        context.put("server", taskDefinition.getConfiguration().get("server"));
-		context.put("username", taskDefinition.getConfiguration().get("username"));
-		context.put("password", "********");
-		context.put("name", taskDefinition.getConfiguration().get("name"));
+        context.put(HOST, taskDefinition.getConfiguration().get(HOST));
+		context.put(USERNAME, taskDefinition.getConfiguration().get(USERNAME));
+		context.put(NAME, taskDefinition.getConfiguration().get(NAME));
     }
 
     @Override
@@ -93,28 +114,31 @@ public class VirtualMachineTaskConfigurator extends AbstractTaskConfigurator
     {
         super.validate(params, errorCollection);
 
-		final String server = params.getString("server");
+		final String server = params.getString(HOST);
 		if (StringUtils.isEmpty(server))
 		{
-		    errorCollection.addError("server", textProvider.getText("vm.server.error"));
+		    errorCollection.addError(HOST, textProvider.getText("vm.server.error"));
 		}
 
-		final String username = params.getString("username");
+		final String username = params.getString(USERNAME);
 		if (StringUtils.isEmpty(username))
 		{
-		    errorCollection.addError("username", textProvider.getText("vm.username.error"));
+		    errorCollection.addError(USERNAME, textProvider.getText("vm.username.error"));
 		}
-
-		final String password = params.getString("password");
-		if (StringUtils.isEmpty(password))
+		
+		if ("true".equals(params.getString(CHANGE_PASSWORD)))
 		{
-		    errorCollection.addError("password", textProvider.getText("vm.password.error"));
+			String password = params.getString(PLAIN_PASSWORD);
+			if (StringUtils.isEmpty(password))
+			{
+				errorCollection.addError(PLAIN_PASSWORD, textProvider.getText("vm.password.error"));
+			}
 		}
 
-		final String name = params.getString("name");
+		final String name = params.getString(NAME);
 		if (StringUtils.isEmpty(name))
 		{
-		    errorCollection.addError("name", textProvider.getText("vm.name.error"));
+		    errorCollection.addError(NAME, textProvider.getText("vm.name.error"));
 		}
     }
 

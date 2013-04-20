@@ -40,71 +40,49 @@ import com.atlassian.bamboo.task.TaskException;
 import com.atlassian.bamboo.task.TaskResult;
 import com.atlassian.bamboo.task.TaskResultBuilder;
 import com.atlassian.bamboo.task.TaskType;
+import com.atlassian.bamboo.security.EncryptionService;
  
-public class RevertVirtualMachineTask implements TaskType
+public class RevertVirtualMachineTask extends VirtualMachineTaskType
 {
-    @Override
-    public TaskResult execute(final TaskContext taskContext) throws TaskException
+	public RevertVirtualMachineTask(EncryptionService encryptionService)
     {
-		final BuildLogger buildLogger = taskContext.getBuildLogger();
-		final String server = taskContext.getConfigurationMap().get("server");
-		final String username = taskContext.getConfigurationMap().get("username");
-		final String password = taskContext.getConfigurationMap().get("password");
-		final String name = taskContext.getConfigurationMap().get("name");
-		final String snapshotname = taskContext.getConfigurationMap().get("snapshotName");
-		
-		buildLogger.addBuildLogEntry("Starting the virtual machine '" + name + "' on '" + server + "' using username '" + username + "'");
-		try {
-			buildLogger.addBuildLogEntry("Connecting to server '" + server + "' using username '" + username + "'.");
-			ServiceInstance serviceInstance = new ServiceInstance(new URL(server), username, password, true);
-			buildLogger.addBuildLogEntry("Connected to server '" + server + "' using username '" + username + "'.");
-			try {
-				Folder rootFolder = serviceInstance.getRootFolder();
-		    	InventoryNavigator inventory = new InventoryNavigator(rootFolder);
-		    	VirtualMachine vm = (VirtualMachine)inventory.searchManagedEntity("VirtualMachine", name);
-				if (vm == null) {
-					throw new VirtualMachineNotFoundException("The virtual machine with name '" + name + "' could not be found");
-				}
-				buildLogger.addBuildLogEntry("Found the virtual machine '" + name + "' on '" + server + "' using username '" + username + "'");
-				
-				if (snapshotname == null || "".equals(snapshotname)) {
-					buildLogger.addBuildLogEntry("No snapshot name was specified. The virtual machine '" + name + "' will be reverted to the current snapshot");
-					Task task = vm.revertToCurrentSnapshot_Task(null);
-					if(task.waitForMe()==Task.SUCCESS)
-					{
-						buildLogger.addBuildLogEntry("Reverted the virtual machine '" + name + "' to the current snapshot");
-					}
-					else {
-						buildLogger.addBuildLogEntry("Failed to revert the virtual machine '" + name + "' to the current snapshot");
-					}
-				}
-				else {
-					VirtualMachineSnapshot vmsnap = this.getSnapshotInTree(vm, snapshotname);
-					if(vmsnap != null) {
-						Task task = vmsnap.revertToSnapshot_Task(null);
-						if(task.waitForMe()==Task.SUCCESS) {
-							buildLogger.addBuildLogEntry("Reverted the virtual machine '" + name + "' to the snapshot '" + snapshotname + "'");
-						}
-						else {
-							buildLogger.addBuildLogEntry("Failed to revert the virtual machine '" + name + "' to the snapshot '" + snapshotname + "'");
-						}
-					}
-				}
-				
-				buildLogger.addBuildLogEntry("The guest of the virtual machine '" + name + "' is ready to be used.");
-			}
-			finally {
-				buildLogger.addBuildLogEntry("Disconnecting from server '" + server + "'.");
-				serviceInstance.getServerConnection().logout();
-				buildLogger.addBuildLogEntry("Disconnected from server '" + server + "'.");
-			}
-		}
-		catch(Exception exception) {
-			throw new TaskException("Failed to start virtual machine '" + name + "' on '" + server + "' using username '" + username + "'", exception);
-		}
-		return TaskResultBuilder.create(taskContext).success().build();
+        super(encryptionService);
     }
 
+    @Override
+	protected TaskResult execute(final TaskContext taskContext, final VirtualMachine vm) throws Throwable
+	{
+		final BuildLogger buildLogger = taskContext.getBuildLogger();
+		final String name = vm.getName();
+		final String snapshotname = taskContext.getConfigurationMap().get("snapshotName");
+		
+		if (snapshotname == null || "".equals(snapshotname)) {
+			buildLogger.addBuildLogEntry("No snapshot name was specified. The virtual machine '" + name + "' will be reverted to the current snapshot");
+			Task task = vm.revertToCurrentSnapshot_Task(null);
+			if(task.waitForMe()==Task.SUCCESS)
+			{
+				buildLogger.addBuildLogEntry("Reverted the virtual machine '" + name + "' to the current snapshot");
+			}
+			else {
+				buildLogger.addBuildLogEntry("Failed to revert the virtual machine '" + name + "' to the current snapshot");
+			}
+		}
+		else {
+			VirtualMachineSnapshot vmsnap = this.getSnapshotInTree(vm, snapshotname);
+			if(vmsnap != null) {
+				Task task = vmsnap.revertToSnapshot_Task(null);
+				if(task.waitForMe()==Task.SUCCESS) {
+					buildLogger.addBuildLogEntry("Reverted the virtual machine '" + name + "' to the snapshot '" + snapshotname + "'");
+				}
+				else {
+					buildLogger.addBuildLogEntry("Failed to revert the virtual machine '" + name + "' to the snapshot '" + snapshotname + "'");
+				}
+			}
+		}
+		buildLogger.addBuildLogEntry("The guest of the virtual machine '" + name + "' is ready to be used.");
+		return TaskResultBuilder.create(taskContext).success().build();
+	}
+	
 	private VirtualMachineSnapshot getSnapshotInTree(VirtualMachine vm, String snapName)
 	{
 		if (vm == null || snapName == null) 

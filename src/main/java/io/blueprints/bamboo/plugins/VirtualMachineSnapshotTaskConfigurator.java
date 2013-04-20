@@ -28,6 +28,7 @@
 package io.blueprints.bamboo.plugins;
 
 import com.atlassian.bamboo.collections.ActionParametersMap;
+import com.atlassian.bamboo.security.EncryptionService;
 import com.atlassian.bamboo.task.AbstractTaskConfigurator;
 import com.atlassian.bamboo.task.TaskDefinition;
 import com.atlassian.bamboo.utils.error.ErrorCollection;
@@ -39,14 +40,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class RevertVirtualMachineTaskConfigurator extends VirtualMachineTaskConfigurator
+public class VirtualMachineSnapshotTaskConfigurator extends VirtualMachineTaskConfigurator
 {
+	public static final String SNAPSHOT = "snapshotName";
+
+    public VirtualMachineSnapshotTaskConfigurator(EncryptionService encryptionService)
+    {
+        super(encryptionService);
+    }
+	
     @NotNull
     @Override
     public Map<String, String> generateTaskConfigMap(@NotNull final ActionParametersMap params, @Nullable final TaskDefinition previousTaskDefinition)
     {
         final Map<String, String> config = super.generateTaskConfigMap(params, previousTaskDefinition);
-		config.put("snapshotName", params.getString("snapshotName"));
+		config.put(SNAPSHOT, params.getString(SNAPSHOT));
         return config;
     }
 
@@ -54,21 +62,21 @@ public class RevertVirtualMachineTaskConfigurator extends VirtualMachineTaskConf
     public void populateContextForCreate(@NotNull final Map<String, Object> context)
     {
         super.populateContextForCreate(context);
-		context.put("snapshotName", "");
+		context.put(SNAPSHOT, "");
     }
 
     @Override
     public void populateContextForEdit(@NotNull final Map<String, Object> context, @NotNull final TaskDefinition taskDefinition)
     {
         super.populateContextForEdit(context, taskDefinition);
-		context.put("snapshotName", taskDefinition.getConfiguration().get("snapshotName"));
+		context.put(SNAPSHOT, taskDefinition.getConfiguration().get(SNAPSHOT));
     }
 
     @Override
     public void populateContextForView(@NotNull final Map<String, Object> context, @NotNull final TaskDefinition taskDefinition)
     {
         super.populateContextForView(context, taskDefinition);
-		context.put("snapshotName", taskDefinition.getConfiguration().get("snapshotName"));
+		context.put(SNAPSHOT, taskDefinition.getConfiguration().get(SNAPSHOT));
     }
 
     @Override

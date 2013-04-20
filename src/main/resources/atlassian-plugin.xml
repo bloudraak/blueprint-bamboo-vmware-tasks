@@ -49,7 +49,7 @@
 
 	<taskType key="revertVirtualMachineTask" name="VMware Revert Virtual Machine" class="io.blueprints.bamboo.plugins.RevertVirtualMachineTask">
 	  	<description>Reverts a virtual machine to a snapshot</description>
-		<configuration class="io.blueprints.bamboo.plugins.RevertVirtualMachineTaskConfigurator"/>
+		<configuration class="io.blueprints.bamboo.plugins.VirtualMachineSnapshotTaskConfigurator"/>
 		<resource type="freemarker" name="edit" location="editVirtualMachineSnapshotTask.ftl"/>
       	<resource type="freemarker" name="view" location="viewVirtualMachineSnapshotTask.ftl"/>
 	</taskType>
