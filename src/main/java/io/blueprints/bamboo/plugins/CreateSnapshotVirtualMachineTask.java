@@ -34,13 +34,11 @@ import java.rmi.RemoteException;
 import com.vmware.vim25.*;
 import com.vmware.vim25.mo.*;
 
-import com.atlassian.bamboo.build.logger.BuildLogger;
-import com.atlassian.bamboo.task.TaskContext;
-import com.atlassian.bamboo.task.TaskException;
-import com.atlassian.bamboo.task.TaskResult;
-import com.atlassian.bamboo.task.TaskResultBuilder;
-import com.atlassian.bamboo.task.TaskType;
-import com.atlassian.bamboo.security.EncryptionService;
+import com.atlassian.bamboo.*;
+import com.atlassian.bamboo.task.*;
+import com.atlassian.bamboo.plan.*;
+import com.atlassian.bamboo.security.*;
+import com.atlassian.bamboo.build.logger.*;
  
 public class CreateSnapshotVirtualMachineTask extends VirtualMachineTaskType
 {
@@ -62,7 +60,8 @@ public class CreateSnapshotVirtualMachineTask extends VirtualMachineTaskType
 		String snapshotname = taskContext.getConfigurationMap().get("snapshotName");
 		
 		if (snapshotname == null || "".equals(snapshotname)) {
-			snapshotname = taskContext.getBuildContext().getPlanResultKey().getKey();
+			PlanResultKey jobResultKey = taskContext.getBuildContext().getPlanResultKey();
+			snapshotname = PlanKeys.getChainResultKey(jobResultKey).getKey();
 		}
 		
 		Task task = vm.createSnapshot_Task(snapshotname, "", false, false);
