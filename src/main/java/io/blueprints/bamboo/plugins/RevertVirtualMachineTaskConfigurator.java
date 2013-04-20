@@ -25,7 +25,7 @@ public class RevertVirtualMachineTaskConfigurator extends AbstractTaskConfigurat
 		config.put("username", params.getString("username"));
 		config.put("password", params.getString("password"));
 		config.put("name", params.getString("name"));
-		config.put("snapshot", params.getString("snapshot"));
+		config.put("snapshotName", params.getString("snapshotName"));
         return config;
     }
 
@@ -38,7 +38,7 @@ public class RevertVirtualMachineTaskConfigurator extends AbstractTaskConfigurat
 		context.put("username", "");
 		context.put("password", "");
 		context.put("name", "");
-		context.put("snapshot", "");
+		context.put("snapshotName", "");
     }
 
     @Override
@@ -50,7 +50,7 @@ public class RevertVirtualMachineTaskConfigurator extends AbstractTaskConfigurat
 		context.put("username", taskDefinition.getConfiguration().get("username"));
 		context.put("password", taskDefinition.getConfiguration().get("password"));
 		context.put("name", taskDefinition.getConfiguration().get("name"));
-		context.put("snapshot", taskDefinition.getConfiguration().get("snapshot"));
+		context.put("snapshotName", taskDefinition.getConfiguration().get("snapshotName"));
     }
 
     @Override
@@ -61,7 +61,7 @@ public class RevertVirtualMachineTaskConfigurator extends AbstractTaskConfigurat
 		context.put("username", taskDefinition.getConfiguration().get("username"));
 		context.put("password", "********");
 		context.put("name", taskDefinition.getConfiguration().get("name"));
-		context.put("snapshot", taskDefinition.getConfiguration().get("snapshot"));
+		context.put("snapshotName", taskDefinition.getConfiguration().get("snapshotName"));
     }
 
     @Override

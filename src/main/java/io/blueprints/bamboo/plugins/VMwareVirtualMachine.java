@@ -57,7 +57,7 @@ public class VMwareVirtualMachine {
 					}
 
 					vm = (VirtualMachine) vms[j];
-					if (!name.equalsIgnoreCase(name)) {
+					if (!vm.getName().equalsIgnoreCase(name)) {
 						continue;
 					}
 				}

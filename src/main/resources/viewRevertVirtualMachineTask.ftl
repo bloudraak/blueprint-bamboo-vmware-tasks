@@ -4,4 +4,4 @@
 
 [@ww.label labelKey="vm.name" name="name"/]
 
-[@ww.label labelKey="vm.snapshot" name="snapshot" /]
+[@ww.label labelKey="vm.snapshot" name="snapshotName" /]

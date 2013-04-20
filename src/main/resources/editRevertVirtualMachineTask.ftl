@@ -6,4 +6,4 @@
 
 [@ww.textfield labelKey="vm.name" name="name" required='true'/]
 
-[@ww.textfield labelKey="vm.snapshot" name="snapshot" required='false'/]
+[@ww.textfield labelKey="vm.snapshot" name="snapshotName" required='false'/]
