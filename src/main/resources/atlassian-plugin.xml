@@ -50,29 +50,29 @@
 	<taskType key="revertVirtualMachineTask" name="VMware Revert Virtual Machine" class="io.blueprints.bamboo.plugins.RevertVirtualMachineTask">
 	  	<description>Reverts a virtual machine to a snapshot</description>
 		<configuration class="io.blueprints.bamboo.plugins.RevertVirtualMachineTaskConfigurator"/>
-		<resource type="freemarker" name="edit" location="editRevertVirtualMachineTask.ftl"/>
-      	<resource type="freemarker" name="view" location="viewRevertVirtualMachineTask.ftl"/>
+		<resource type="freemarker" name="edit" location="editVirtualMachineSnapshotTask.ftl"/>
+      	<resource type="freemarker" name="view" location="viewVirtualMachineSnapshotTask.ftl"/>
 	</taskType>
 	
 	<taskType key="shutdownVirtualMachineTask" name="VMware Shutdown Virtual Machine" class="io.blueprints.bamboo.plugins.ShutdownVirtualMachineTask">
 	  	<description>Shuts down a virtual machine</description>
 		<configuration class="io.blueprints.bamboo.plugins.VirtualMachineTaskConfigurator"/>
-		<resource type="freemarker" name="edit" location="editShutdownVirtualMachineTask.ftl"/>
-      	<resource type="freemarker" name="view" location="viewShutdownVirtualMachineTask.ftl"/>
+		<resource type="freemarker" name="edit" location="editVirtualMachineTask.ftl"/>
+      	<resource type="freemarker" name="view" location="viewVirtualMachineTask.ftl"/>
 	</taskType>
 	
 	<taskType key="startVirtualMachineTask" name="VMware Start Virtual Machine" class="io.blueprints.bamboo.plugins.StartVirtualMachineTask">
 	  	<description>Starts a virtual machine</description>
 		<configuration class="io.blueprints.bamboo.plugins.VirtualMachineTaskConfigurator"/>
-		<resource type="freemarker" name="edit" location="editStartVirtualMachineTask.ftl"/>
-      	<resource type="freemarker" name="view" location="viewStartVirtualMachineTask.ftl"/>
+		<resource type="freemarker" name="edit" location="editVirtualMachineTask.ftl"/>
+      	<resource type="freemarker" name="view" location="viewVirtualMachineTask.ftl"/>
 	</taskType>
 	
 	<taskType key="powerOffVirtualMachineTask" name="VMware Power Virtual Machine Off" class="io.blueprints.bamboo.plugins.PowerOffVirtualMachineTask">
 	  	<description>Powers a virtual machine off</description>
 		<configuration class="io.blueprints.bamboo.plugins.VirtualMachineTaskConfigurator"/>
-		<resource type="freemarker" name="edit" location="editPowerOffVirtualMachineTask.ftl"/>
-      	<resource type="freemarker" name="view" location="viewPowerOffVirtualMachineTask.ftl"/>
+		<resource type="freemarker" name="edit" location="editVirtualMachineTask.ftl"/>
+      	<resource type="freemarker" name="view" location="viewVirtualMachineTask.ftl"/>
 	</taskType>
     
     <!-- import from the product container -->
