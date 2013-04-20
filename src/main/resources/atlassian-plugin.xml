@@ -54,6 +54,13 @@
       	<resource type="freemarker" name="view" location="viewVirtualMachineSnapshotTask.ftl"/>
 	</taskType>
 	
+	<taskType key="createSnapshotTask" name="VMware Create Snapshot" class="io.blueprints.bamboo.plugins.CreateSnapshotVirtualMachineTask">
+	  	<description>Creates a snapshot of the virtual machine</description>
+		<configuration class="io.blueprints.bamboo.plugins.VirtualMachineSnapshotTaskConfigurator"/>
+		<resource type="freemarker" name="edit" location="editVirtualMachineSnapshotTask.ftl"/>
+      	<resource type="freemarker" name="view" location="viewVirtualMachineSnapshotTask.ftl"/>
+	</taskType>
+	
 	<taskType key="shutdownVirtualMachineTask" name="VMware Shutdown Virtual Machine" class="io.blueprints.bamboo.plugins.ShutdownVirtualMachineTask">
 	  	<description>Shuts down a virtual machine</description>
 		<configuration class="io.blueprints.bamboo.plugins.VirtualMachineTaskConfigurator"/>
